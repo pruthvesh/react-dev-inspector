@@ -97,7 +97,7 @@ export const ControlState = () => {
 export const DisableHotkeys = () => {
   const [active, _setActive] = useState(false)
   const [timeRemaining, setRemaining] = useState(0)
-  const remainRef = useRef<Subscription>()
+  const remainRef = useRef<Subscription | undefined>(undefined)
   const waitSeconds = 3
 
   const setActive = (active: boolean) => {

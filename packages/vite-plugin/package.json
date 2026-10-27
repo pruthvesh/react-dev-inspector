@@ -2,7 +2,7 @@
   "name": "@react-dev-inspector/vite-plugin",
   "version": "2.1.0-beta.10",
   "sideEffects": false,
-  "description": "vite plugin for react-dev-inspector to add server middleware. support vite2/vite3/vite4",
+  "description": "vite plugins for react-dev-inspector: the open-in-editor server middleware, and JSX source stamping without Babel in the app's toolchain",
   "main": "dist/cjs",
   "module": "dist/esm",
   "types": "dist/esm",
@@ -25,7 +25,8 @@
     "clean": "rimraf coverage dist es lib build",
     "build:esm": "tsc -p tsconfig.esm.json",
     "build:cjs": "tsc -p tsconfig.cjs.json",
-    "build": "npm-run-all clean --parallel build:esm build:cjs"
+    "build": "npm-run-all clean --parallel build:esm build:cjs",
+    "test": "vitest run"
   },
   "files": [
     "README.md",
@@ -33,17 +34,22 @@
     "dist"
   ],
   "engines": {
-    "node": ">=12.0.0"
+    "node": ">=18.0.0"
   },
   "dependencies": {
-    "@react-dev-inspector/middleware": "workspace:*"
+    "@react-dev-inspector/middleware": "workspace:*",
+    "@react-dev-inspector/babel-plugin": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "20.12.10",
     "@zthxxx/tsconfig": "1.0.5",
     "npm-run-all": "4.1.5",
     "rimraf": "3.0.2",
-    "typescript": "5.2.2",
-    "vite": "2.9.16"
+    "typescript": "5.9.3",
+    "vite": "8.3.5",
+    "vitest": "1.1.1"
+  },
+  "peerDependencies": {
+    "vite": ">=2.9.0"
   }
 }

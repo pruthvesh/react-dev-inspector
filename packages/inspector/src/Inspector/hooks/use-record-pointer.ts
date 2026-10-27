@@ -8,7 +8,7 @@ import {
 export const useRecordPointer = ({ disable }: {
   disable?: boolean;
 }): MutableRefObject<PointerEvent | undefined> => {
-  const pointerRef = useRef<PointerEvent>()
+  const pointerRef = useRef<PointerEvent | undefined>(undefined)
 
   useEffect(() => {
     const recordPointer = (event: PointerEvent) => {

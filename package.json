@@ -6,7 +6,7 @@
   "license": "MIT",
   "author": "zthxxx <zthxxx.me@gmail.com>",
   "repository": "zthxxx/react-dev-inspector",
-  "packageManager": "pnpm@9",
+  "packageManager": "pnpm@9.15.9",
   "files": [],
   "scripts": {
     "prepare": "husky",

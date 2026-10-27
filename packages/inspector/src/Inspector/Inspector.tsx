@@ -188,8 +188,8 @@ export const Inspector = function<
   } = props
 
   const pointerRef = useRecordPointer({ disable })
-  const agentRef = useRef<InspectAgent<Element>>()
-  const contextPanelRef = useRef<InspectContextPanel<InspectElementItem<Element>>>()
+  const agentRef = useRef<InspectAgent<Element> | undefined>(undefined)
+  const contextPanelRef = useRef<InspectContextPanel<InspectElementItem<Element>> | undefined>(undefined)
 
 
   useEffect(() => {

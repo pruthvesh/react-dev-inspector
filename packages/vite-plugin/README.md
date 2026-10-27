@@ -17,7 +17,7 @@ npm i -D @react-dev-inspector/vite-plugin
 ```
 
 The `@react-dev-inspector/vite-plugin` only register a `inspectorServer` for middleware to launch the local editor with an endpoint using [`@react-dev-inspector/middleware`](https://react-dev-inspector.zthxxx.me/docs/integration#inspector-middleware),
-that compatible with `vite@5` / `vite@4` / `vite@3` / `vite@2`.
+that compatible with `vite@8` / `vite@5` / `vite@4` / `vite@3` / `vite@2`.
 
 Just add it into `vite.config.ts` and that's all done.
 
@@ -41,6 +41,34 @@ export default defineConfig({
   ],
 })
 ```
+
+### Vite 8 and `@vitejs/plugin-react` 6 (no Babel)
+
+`@vitejs/plugin-react` 6 on Vite 8 has no Babel step, so the `babel: { plugins: ['@react-dev-inspector/babel-plugin'] }`
+option from older setups does not exist. Use `inspectorSource` instead: in the dev server it stamps each JSX element in
+your own `.jsx` / `.tsx` files with its file, line and column (`data-inspector-*`), which is how the inspector finds a
+component's source on React 19 (React 19 fibers no longer carry `_debugSource`).
+
+```ts
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import { inspectorServer, inspectorSource } from '@react-dev-inspector/vite-plugin'
+
+export default defineConfig(({ command }) => ({
+  plugins: [
+    // dev only: neither plugin has any use in a production build
+    ...(command === 'serve' ? [inspectorServer(), inspectorSource()] : []),
+    react(),
+  ],
+}))
+```
+
+- `inspectorSource` runs before the plugin that compiles JSX (`enforce: 'pre'`) and keeps your TypeScript and JSX as they
+  were, with a source map, so any JSX compiler can follow it. It only runs in `serve` (`apply: 'serve'`).
+- The stamped paths are relative to `process.cwd()`, the same base the editor endpoint resolves them against
+  (`inspectorSource({ cwd })` and `excludes` are available). `node_modules/` is always skipped.
+- A file it cannot parse is left as it was and reported as a warning: the inspector never breaks the app's own build.
+- Tested against Vite 8 with React 19.3; `inspectorServer` is unchanged and works as before on older Vite.
 
 ### Example
 

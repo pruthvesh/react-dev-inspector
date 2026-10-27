@@ -23,13 +23,20 @@ export interface TransformOptions {
   babelOptions?: ParserOptions;
 }
 
+export interface TransformResult {
+  code: string;
+  /** source map from the stamped code back to the original; `null` when the file was left as it was */
+  map: ReturnType<typeof generate>['map'];
+}
+
 /**
- * inject line, column, relative-path to JSX html data attribute in source code
+ * inject line, column, relative-path to JSX html data attribute in source code,
+ * and return the source map along with the code, for a bundler plugin to chain
  *
  * @type webpack.loader.Loader
  * ref: https://astexplorer.net  +  @babel/parser
  */
-export const transform = ({
+export const transformWithSourceMap = ({
   rootPath = process.cwd(),
   filePath,
   sourceCode,
@@ -47,7 +54,7 @@ export const transform = ({
   filePath: string;
   sourceCode: string;
   options?: TransformOptions;
-}) => {
+}): TransformResult => {
   /**
    * example:
    * rootPath: /home/xxx/project
@@ -58,7 +65,7 @@ export const transform = ({
 
   const isSkip = pathMatch(filePath, options?.excludes)
   if (isSkip) {
-    return sourceCode
+    return { code: sourceCode, map: null }
   }
 
   const ast: Node = parse(sourceCode, {
@@ -93,9 +100,26 @@ export const transform = ({
 
   const {
     code,
-  } = generate(ast, {
-    decoratorsBeforeExport: true,
-  })
+    map,
+  } = generate(
+    ast,
+    {
+      decoratorsBeforeExport: true,
+      sourceMaps: true,
+      sourceFileName: filePath,
+    },
+    sourceCode,
+  )
 
-  return code
+  return { code, map }
 }
+
+/**
+ * inject line, column, relative-path to JSX html data attribute in source code
+ *
+ * @type webpack.loader.Loader
+ * ref: https://astexplorer.net  +  @babel/parser
+ */
+export const transform = (
+  params: Parameters<typeof transformWithSourceMap>[0],
+): string => transformWithSourceMap(params).code

@@ -15,5 +15,6 @@
   // https://www.typescriptlang.org/docs/handbook/project-references.html
   "references": [
     { "path": "../middleware" },
+    { "path": "../babel-plugin" },
   ],
 }
